@@ -26,6 +26,30 @@ const App: React.FC = () => {
 
   const [currentTopic, setCurrentTopic] = useState<string>('');
 
+  // Dark Mode State
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved === 'dark';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // Apply theme class to html element
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode(prev => !prev);
+
   useEffect(() => {
     // Initialize chat session if user is already logged in on mount
     if (userProfile) {
@@ -79,6 +103,8 @@ const App: React.FC = () => {
         userProfile={userProfile} 
         onEdit={() => setView('edit-profile')} 
         onTopicClick={handleTopicClick}
+        isDarkMode={isDarkMode}
+        toggleTheme={toggleTheme}
       />
     );
   }

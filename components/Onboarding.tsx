@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserProfile, TaskItem } from '../types';
 import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES } from '../constants';
@@ -124,7 +123,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
         <button 
           onClick={handleBack}
           disabled={isFinishing}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
+          className="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
         >
           <ChevronLeft size={20} /> Back
         </button>
@@ -132,7 +131,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       <button 
         onClick={isLastStep ? finishOnboarding : handleNext}
         disabled={!isValid || isFinishing}
-        className="flex-[2] bg-sweden-blue disabled:bg-gray-300 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2"
+        className="flex-[2] bg-sweden-blue disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2"
       >
         {isFinishing ? (
            <>
@@ -150,8 +149,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 0:
         return (
           <div className="text-center space-y-6 animate-fade-in">
-            <h1 className="text-3xl font-bold text-sweden-blue mb-2">Welcome!</h1>
-            <p className="text-gray-600 text-lg">
+            <h1 className="text-3xl font-bold text-sweden-blue dark:text-blue-400 mb-2">Welcome!</h1>
+            <p className="text-gray-600 dark:text-gray-300 text-lg">
               Hello! I’m your friendly guide. <br/>
               Let’s get to know you so I can help you better.
             </p>
@@ -167,24 +166,24 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 1: // Username
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <User className="text-sweden-blue" /> What should I call you?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <User className="text-sweden-blue dark:text-blue-400" /> What should I call you?
             </h2>
             <input 
               type="text" 
               placeholder="Your Name"
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
               value={formData.username || ''}
               onChange={(e) => updateField('username', e.target.value)}
             />
             <div className="space-y-2">
-              <p className="text-sm text-gray-500">Or pick one of these:</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Or pick one of these:</p>
               <div className="flex flex-wrap gap-2">
                 {suggestedNames.map(name => (
                   <button 
                     key={name}
                     onClick={() => updateField('username', name)}
-                    className={`px-4 py-2 rounded-full text-sm border transition ${formData.username === name ? 'bg-sweden-blue text-white border-sweden-blue' : 'bg-white text-gray-600 border-gray-300 hover:border-sweden-blue'}`}
+                    className={`px-4 py-2 rounded-full text-sm border transition ${formData.username === name ? 'bg-sweden-blue text-white border-sweden-blue' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-sweden-blue'}`}
                   >
                     {name}
                   </button>
@@ -198,11 +197,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 2: // Origin
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Globe className="text-sweden-blue" /> Where are you from?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Globe className="text-sweden-blue dark:text-blue-400" /> Where are you from?
             </h2>
             <select 
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
               value={formData.originCountry || ''}
               onChange={(e) => updateField('originCountry', e.target.value)}
             >
@@ -216,23 +215,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 3: // In Sweden?
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Plane className="text-sweden-blue" /> Are you already in Sweden?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Plane className="text-sweden-blue dark:text-blue-400" /> Are you already in Sweden?
             </h2>
             <div className="grid grid-cols-2 gap-4">
               <button 
                 onClick={() => updateField('inSweden', true)}
-                className={`p-6 rounded-xl border-2 transition flex flex-col items-center gap-2 ${formData.inSweden ? 'border-sweden-blue bg-sweden-sky text-sweden-blue' : 'border-gray-200 hover:border-blue-200'}`}
+                className={`p-6 rounded-xl border-2 transition flex flex-col items-center gap-2 ${formData.inSweden ? 'border-sweden-blue bg-sweden-sky dark:bg-blue-900/30 text-sweden-blue dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 dark:bg-gray-700 hover:border-blue-200'}`}
               >
                 <Check size={32} className={formData.inSweden ? 'opacity-100' : 'opacity-0'} />
-                <span className="font-bold">Yes</span>
+                <span className="font-bold dark:text-white">Yes</span>
               </button>
               <button 
                 onClick={() => updateField('inSweden', false)}
-                className={`p-6 rounded-xl border-2 transition flex flex-col items-center gap-2 ${formData.inSweden === false ? 'border-sweden-blue bg-sweden-sky text-sweden-blue' : 'border-gray-200 hover:border-blue-200'}`}
+                className={`p-6 rounded-xl border-2 transition flex flex-col items-center gap-2 ${formData.inSweden === false ? 'border-sweden-blue bg-sweden-sky dark:bg-blue-900/30 text-sweden-blue dark:text-blue-400' : 'border-gray-200 dark:border-gray-700 dark:bg-gray-700 hover:border-blue-200'}`}
               >
                 <Check size={32} className={formData.inSweden === false ? 'opacity-100' : 'opacity-0'} />
-                <span className="font-bold">No</span>
+                <span className="font-bold dark:text-white">No</span>
               </button>
             </div>
             {renderButtons(formData.inSweden !== undefined)}
@@ -242,13 +241,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 4: // Arrival Date
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Calendar className="text-sweden-blue" /> When will you arrive?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Calendar className="text-sweden-blue dark:text-blue-400" /> When will you arrive?
             </h2>
-            <p className="text-gray-500 text-sm">If you are already here, select your arrival date or today.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">If you are already here, select your arrival date or today.</p>
             <input 
               type="date" 
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
               value={formData.arrivalDate || ''}
               onChange={(e) => updateField('arrivalDate', e.target.value)}
             />
@@ -259,11 +258,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       case 5: // Stay Duration
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Clock className="text-sweden-blue" /> How long is your stay?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Clock className="text-sweden-blue dark:text-blue-400" /> How long is your stay?
             </h2>
             <select 
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
               value={formData.stayDuration || ''}
               onChange={(e) => updateField('stayDuration', e.target.value)}
             >
@@ -281,13 +280,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
         case 6: // Age
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <User className="text-sweden-blue" /> How old are you?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <User className="text-sweden-blue dark:text-blue-400" /> How old are you?
             </h2>
             <input 
               type="number" 
               placeholder="Age"
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg"
               value={formData.age || ''}
               onChange={(e) => updateField('age', parseInt(e.target.value))}
             />
@@ -298,12 +297,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
         case 7: // Language
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Globe className="text-sweden-blue" /> Preferred language?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Globe className="text-sweden-blue dark:text-blue-400" /> Preferred language?
             </h2>
-            <p className="text-gray-500 text-sm">I'll do my best to communicate in this language.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">I'll do my best to communicate in this language.</p>
              <select 
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
               value={formData.preferredLanguage || 'English'}
               onChange={(e) => updateField('preferredLanguage', e.target.value)}
             >
@@ -326,10 +325,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
 
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <BookOpen className="text-sweden-blue" /> What do you need to sort out?
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <BookOpen className="text-sweden-blue dark:text-blue-400" /> What do you need to sort out?
             </h2>
-             <p className="text-gray-500 text-sm">Select the categories you want to focus on or add your own.</p>
+             <p className="text-gray-500 dark:text-gray-400 text-sm">Select the categories you want to focus on or add your own.</p>
             
             <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
               {allCategories.map(category => {
@@ -339,7 +338,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
                   <button
                     key={category}
                     onClick={() => toggleArrayItem('focusCategories', category)}
-                    className={`p-4 rounded-xl text-left font-medium border-2 transition flex items-center justify-between group ${isChecked ? 'bg-sweden-sky border-sweden-blue text-sweden-blue' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`p-4 rounded-xl text-left font-medium border-2 transition flex items-center justify-between group ${isChecked ? 'bg-sweden-sky dark:bg-blue-900/30 border-sweden-blue dark:border-blue-400 text-sweden-blue dark:text-blue-300' : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-gray-300'}`}
                   >
                      <div className="flex items-center gap-3">
                          <div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${isChecked ? 'bg-sweden-blue border-sweden-blue' : 'bg-white border-gray-300'}`}>
@@ -348,7 +347,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
                         <span>{category}</span>
                      </div>
                      {isCustom && (
-                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Custom</span>
+                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">Custom</span>
                      )}
                   </button>
                 );
@@ -362,7 +361,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   placeholder="Add custom topic (e.g. Ice Hockey)"
-                  className="flex-1 p-3 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none"
+                  className="flex-1 p-3 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none"
                   onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                           e.preventDefault();
@@ -389,12 +388,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
   };
 
   return (
-    <div className="min-h-screen bg-sweden-sky flex items-center justify-center p-4">
-      <div className="bg-white max-w-md w-full rounded-3xl shadow-xl p-8 flex flex-col animate-fade-in-up">
+    <div className="min-h-screen bg-sweden-sky dark:bg-gray-900 flex items-center justify-center p-4 transition-colors">
+      <div className="bg-white dark:bg-gray-800 max-w-md w-full rounded-3xl shadow-xl p-8 flex flex-col animate-fade-in-up transition-colors">
         <div>
           {/* Progress Bar */}
           {step > 0 && (
-            <div className="w-full bg-gray-100 h-2 rounded-full mb-8">
+            <div className="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full mb-8">
               <div 
                 className="bg-sweden-yellow h-2 rounded-full transition-all duration-300" 
                 style={{ width: `${(step / 8) * 100}%` }}

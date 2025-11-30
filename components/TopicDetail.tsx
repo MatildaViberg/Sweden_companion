@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserProfile, GuideData } from '../types';
 import ChatInterface from './ChatInterface';
@@ -41,7 +40,7 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
   }, [topic, userProfile]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24 transition-colors">
       {/* Header Image/Banner Area */}
       <div className="bg-sweden-blue text-white pt-8 pb-16 px-4 md:px-8 relative overflow-hidden">
        
@@ -63,25 +62,25 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
       <div className="max-w-4xl mx-auto px-4 md:px-8 -mt-8 relative z-20 space-y-8">
         
         {loading ? (
-           <div className="bg-white rounded-3xl p-8 shadow-sm animate-pulse space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-              <div className="h-32 bg-gray-100 rounded-xl"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-32 bg-gray-100 rounded-xl"></div>
+           <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm animate-pulse space-y-4">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+              <div className="h-32 bg-gray-100 dark:bg-gray-700 rounded-xl"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+              <div className="h-32 bg-gray-100 dark:bg-gray-700 rounded-xl"></div>
            </div>
         ) : (
           <>
             {/* Steps Timeline / Cards */}
             {data?.steps && data.steps.length > 0 && (
-              <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+              <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 transition-colors">
                 
                 {/* Key Steps Container with Header Inside */}
                 <div className="grid gap-8 md:grid-cols-2">
                   <div className="md:col-span-2 flex items-center gap-3">
-                    <div className="bg-sweden-sky p-2 rounded-xl text-sweden-blue">
+                    <div className="bg-sweden-sky dark:bg-blue-900/30 p-2 rounded-xl text-sweden-blue dark:text-blue-300">
                         <ListOrdered size={24} />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-800">Key Steps</h2>
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white">Key Steps</h2>
                   </div>
 
                   {data.steps.map((step, idx) => (
@@ -90,8 +89,8 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
                          {idx + 1}
                        </div>
                        <div>
-                          <h3 className="font-bold text-lg text-gray-800 mb-2">{step.title}</h3>
-                          <p className="text-gray-600 leading-relaxed">{step.desc}</p>
+                          <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100 mb-2">{step.title}</h3>
+                          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{step.desc}</p>
                        </div>
                     </div>
                   ))}
@@ -102,18 +101,18 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
             <div className="grid md:grid-cols-3 gap-6">
               {/* Checklist */}
               {data?.checklist && data.checklist.length > 0 && (
-                <section className="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <div className="flex items-center gap-2 mb-4 text-green-600">
+                <section className="md:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors">
+                  <div className="flex items-center gap-2 mb-4 text-green-600 dark:text-green-400">
                     <CheckCircle2 />
-                    <h2 className="text-lg font-bold text-gray-800">Quick Checklist</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-white">Quick Checklist</h2>
                   </div>
                   <div className="space-y-3">
                     {data.checklist.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-3">
-                         <div className="mt-1 bg-green-100 p-1 rounded-full text-green-600">
+                         <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-1 rounded-full text-green-600 dark:text-green-400">
                            <CheckCircle2 size={14} />
                          </div>
-                         <span className="text-gray-700 font-medium">{item}</span>
+                         <span className="text-gray-700 dark:text-gray-300 font-medium">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -122,12 +121,12 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
 
               {/* Pro Tip Card */}
               {data?.proTip && (
-                <section className="bg-sweden-yellow/10 rounded-2xl p-6 border border-sweden-yellow/20 md:col-span-1 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-3 text-yellow-700">
+                <section className="bg-sweden-yellow/10 dark:bg-yellow-900/20 rounded-2xl p-6 border border-sweden-yellow/20 dark:border-yellow-700/30 md:col-span-1 flex flex-col justify-center transition-colors">
+                  <div className="flex items-center gap-2 mb-3 text-yellow-700 dark:text-yellow-400">
                     <Lightbulb className="fill-current" />
                     <h2 className="font-bold uppercase tracking-wider text-xs">Pro Tip</h2>
                   </div>
-                  <p className="text-gray-800 font-medium italic">
+                  <p className="text-gray-800 dark:text-gray-200 font-medium italic">
                     "{data.proTip}"
                   </p>
                 </section>
@@ -136,16 +135,16 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
 
             {/* Sources Section */}
             {data?.sources && data.sources.length > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <div className="flex items-center gap-2 mb-2 text-gray-600">
+                <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 transition-colors">
+                    <div className="flex items-center gap-2 mb-2 text-gray-600 dark:text-gray-400">
                         <Search size={20} />
-                        <h2 className="text-lg font-bold">Recommended Sources</h2>
+                        <h2 className="text-lg font-bold dark:text-white">Recommended Sources</h2>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">You can look up these websites for more official information:</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">You can look up these websites for more official information:</p>
                     <ul className="space-y-2">
                         {data.sources.map((source, idx) => (
-                            <li key={idx} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-800 font-medium">
-                                <span className="w-1.5 h-1.5 bg-sweden-blue rounded-full flex-shrink-0"></span>
+                            <li key={idx} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-100 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-medium">
+                                <span className="w-1.5 h-1.5 bg-sweden-blue dark:bg-blue-400 rounded-full flex-shrink-0"></span>
                                 {source}
                             </li>
                         ))}
@@ -173,7 +172,7 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
       {isChatOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none p-4">
           <div className="absolute inset-0 bg-black/20 pointer-events-auto" onClick={() => setIsChatOpen(false)}></div>
-          <div className="bg-white w-full max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col pointer-events-auto relative overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-md h-[80vh] sm:h-[600px] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col pointer-events-auto relative overflow-hidden transition-colors">
              <div className="bg-sweden-blue p-4 flex justify-between items-center text-white">
                 <span className="font-bold flex items-center gap-2">
                    <MessageCircle size={20} />
@@ -183,7 +182,7 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
                    <X size={20} />
                 </button>
              </div>
-             <div className="flex-1 overflow-hidden">
+             <div className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-900">
                 <ChatInterface 
                   placeholder="Ask a specific question..." 
                   onClose={() => setIsChatOpen(false)} 
@@ -198,4 +197,3 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
 };
 
 export default TopicDetail;
-    

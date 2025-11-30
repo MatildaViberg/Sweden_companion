@@ -17,18 +17,18 @@ export const DailyPhraseWidget: React.FC = () => {
   const phrase = DAILY_PHRASES[phraseIndex];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-sweden-yellow">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-sweden-yellow transition-colors">
       <div className="flex items-center gap-2 mb-2">
-        <Coffee className="text-sweden-blue" size={20} />
-        <h3 className="font-bold text-gray-700">Phrase of the Day</h3>
+        <Coffee className="text-sweden-blue dark:text-blue-300" size={20} />
+        <h3 className="font-bold text-gray-700 dark:text-gray-200">Phrase of the Day</h3>
       </div>
       <div className="space-y-1">
         <div className="flex items-baseline gap-2 flex-wrap">
-            <p className="text-2xl font-bold text-sweden-blue">{phrase.phrase}</p>
+            <p className="text-2xl font-bold text-sweden-blue dark:text-blue-300">{phrase.phrase}</p>
             <span className="text-sm text-gray-400 font-mono tracking-wide">{phrase.phonetic}</span>
         </div>
-        <p className="text-sm text-gray-500 italic">"{phrase.pronunciation}"</p>
-        <p className="text-gray-700 mt-2">{phrase.meaning}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 italic">"{phrase.pronunciation}"</p>
+        <p className="text-gray-700 dark:text-gray-300 mt-2">{phrase.meaning}</p>
       </div>
     </div>
   );
@@ -66,17 +66,17 @@ export const WeatherWidget: React.FC<WidgetProps> = ({ userProfile }) => {
   }, [userProfile.inSweden]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-sweden-blue">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-sweden-blue transition-colors">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-bold text-gray-700">{weatherInfo.locationText}</h3>
-          <p className="text-sm text-gray-500">{weatherInfo.season}</p>
+          <h3 className="font-bold text-gray-700 dark:text-gray-200">{weatherInfo.locationText}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{weatherInfo.season}</p>
         </div>
         {weatherInfo.icon}
       </div>
       <div className="mt-3 space-y-2">
-        <p className="text-sm"><strong>Wear:</strong> {weatherInfo.clothing}</p>
-        <p className="text-sm bg-sweden-sky text-sweden-blue p-2 rounded-lg">
+        <p className="text-sm dark:text-gray-300"><strong>Wear:</strong> {weatherInfo.clothing}</p>
+        <p className="text-sm bg-sweden-sky dark:bg-blue-900/30 text-sweden-blue dark:text-blue-200 p-2 rounded-lg">
            💡 {weatherInfo.tip}
         </p>
       </div>
@@ -110,30 +110,30 @@ export const HolidayWidget: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5 border-l-4 border-red-400">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-red-400 transition-colors">
        <div className="flex items-center gap-2 mb-2">
         <CalendarHeart className="text-red-500" size={20} />
-        <h3 className="font-bold text-gray-700">
+        <h3 className="font-bold text-gray-700 dark:text-gray-200">
             {todayHoliday ? "Today's Holiday" : "Upcoming Holiday"}
         </h3>
       </div>
       {todayHoliday ? (
         <div>
            <p className="text-xl font-bold text-red-500">{todayHoliday.name}</p>
-           <p className="text-sm text-gray-600 mt-1">{todayHoliday.description}</p>
+           <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{todayHoliday.description}</p>
         </div>
       ) : nextHoliday ? (
         <div>
            <div className="flex justify-between items-baseline mb-1">
-             <p className="font-bold text-gray-800">{nextHoliday.name}</p>
-             <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-md whitespace-nowrap">
+             <p className="font-bold text-gray-800 dark:text-gray-100">{nextHoliday.name}</p>
+             <span className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md whitespace-nowrap">
                 {formatDate(nextHoliday.date)}
              </span>
            </div>
-           <p className="text-sm text-gray-600">{nextHoliday.description}</p>
+           <p className="text-sm text-gray-600 dark:text-gray-400">{nextHoliday.description}</p>
         </div>
       ) : (
-        <p className="text-gray-600">No holidays found.</p>
+        <p className="text-gray-600 dark:text-gray-400">No holidays found.</p>
       )}
     </div>
   );
