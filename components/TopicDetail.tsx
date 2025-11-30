@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserProfile, GuideData } from '../types';
 import ChatInterface from './ChatInterface';
 import { generateTopicGuide } from '../services/geminiService';
-import { ArrowLeft, CheckCircle2, Lightbulb, ListOrdered, MessageCircle, X, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Lightbulb, ListOrdered, MessageCircle, X, ExternalLink, Search } from 'lucide-react';
 
 interface TopicDetailProps {
   topic: string;
@@ -137,13 +138,15 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
             {/* Sources Section */}
             {data?.sources && data.sources.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <div className="flex items-center gap-2 mb-4 text-gray-500">
-                        <ExternalLink size={20} />
-                        <h2 className="text-lg font-bold">Reliable Sources</h2>
+                    <div className="flex items-center gap-2 mb-2 text-gray-600">
+                        <Search size={20} />
+                        <h2 className="text-lg font-bold">Recommended Sources</h2>
                     </div>
+                    <p className="text-sm text-gray-500 mb-4">You can look up these websites for more official information:</p>
                     <ul className="space-y-2">
                         {data.sources.map((source, idx) => (
-                            <li key={idx} className="text-sweden-blue underline decoration-blue-200 hover:decoration-sweden-blue cursor-pointer transition">
+                            <li key={idx} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-800 font-medium">
+                                <span className="w-1.5 h-1.5 bg-sweden-blue rounded-full flex-shrink-0"></span>
                                 {source}
                             </li>
                         ))}
@@ -196,3 +199,4 @@ const TopicDetail: React.FC<TopicDetailProps> = ({ topic, userProfile, onBack })
 };
 
 export default TopicDetail;
+    

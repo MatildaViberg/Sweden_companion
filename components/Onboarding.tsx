@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { UserProfile, TaskItem } from '../types';
 import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES } from '../constants';
-import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft } from 'lucide-react';
+import { generateNewTasks } from '../services/geminiService';
+import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, X } from 'lucide-react';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -12,6 +13,8 @@ interface OnboardingProps {
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
   // If editing, start at step 1 (Username) instead of Welcome
   const [step, setStep] = useState(initialData ? 1 : 0);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const [customCategory, setCustomCategory] = useState('');
   
   // Randomly pick 3 usernames on mount
   const [suggestedNames] = useState(() => {
@@ -42,25 +45,71 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
     }
   };
 
-  const finishOnboarding = () => {
+  const addCustomCategory = () => {
+    if (customCategory.trim()) {
+      const newCat = customCategory.trim();
+      // Add to selection
+      const current = formData.focusCategories || [];
+      if (!current.includes(newCat)) {
+         updateField('focusCategories', [...current, newCat]);
+      }
+      setCustomCategory('');
+    }
+  };
+
+  const finishOnboarding = async () => {
     if (formData.username && formData.originCountry) {
+      setIsFinishing(true);
+      
       // Generate initial tasks based on selected categories
       const selectedCategories = formData.focusCategories || [];
       const initialTasks: TaskItem[] = [];
+      const tempProfile = { ...formData } as UserProfile; // Cast for API context
 
-      selectedCategories.forEach(cat => {
-        const defaultTasks = INITIAL_FOCUS_CATEGORIES[cat] || [];
-        defaultTasks.forEach(taskText => {
-            initialTasks.push({
+      // We map through categories to get their tasks. 
+      // If it's a standard category, use constant data.
+      // If it's a custom category, ask AI to generate tasks.
+      const taskPromises = selectedCategories.map(async (cat) => {
+         if (INITIAL_FOCUS_CATEGORIES[cat]) {
+             return INITIAL_FOCUS_CATEGORIES[cat].map(text => ({
                 id: Date.now().toString() + Math.random().toString(),
                 category: cat,
-                text: taskText,
+                text,
                 isCompleted: false
-            });
-        });
+             }));
+         } else {
+             // Custom category: Generate with AI
+             try {
+                const generatedTexts = await generateNewTasks(cat, [], tempProfile, 3);
+                if (generatedTexts.length === 0) {
+                     return [{
+                        id: Date.now().toString() + Math.random().toString(),
+                        category: cat,
+                        text: `Explore requirements for ${cat}`,
+                        isCompleted: false
+                     }];
+                }
+                return generatedTexts.map(text => ({
+                    id: Date.now().toString() + Math.random().toString(),
+                    category: cat,
+                    text,
+                    isCompleted: false
+                }));
+             } catch (e) {
+                 console.error(`Failed to generate tasks for ${cat}`, e);
+                 return [{
+                    id: Date.now().toString() + Math.random().toString(),
+                    category: cat,
+                    text: `Research ${cat} online`,
+                    isCompleted: false
+                 }];
+             }
+         }
       });
 
-      // Basic validation passed
+      const results = await Promise.all(taskPromises);
+      results.forEach(tasks => initialTasks.push(...tasks));
+
       onComplete({
         ...formData,
         activeTasks: initialTasks,
@@ -74,6 +123,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       {step > 0 && (
         <button 
           onClick={handleBack}
+          disabled={isFinishing}
           className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
         >
           <ChevronLeft size={20} /> Back
@@ -81,10 +131,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
       )}
       <button 
         onClick={isLastStep ? finishOnboarding : handleNext}
-        disabled={!isValid}
-        className="flex-[2] bg-sweden-blue disabled:bg-gray-300 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition"
+        disabled={!isValid || isFinishing}
+        className="flex-[2] bg-sweden-blue disabled:bg-gray-300 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2"
       >
-        {isLastStep ? (initialData ? "Save Changes" : "Finish Setup") : "Next"}
+        {isFinishing ? (
+           <>
+             <Loader className="animate-spin" size={20} /> Setting up...
+           </>
+        ) : (
+           isLastStep ? (initialData ? "Save Changes" : "Finish Setup") : "Next"
+        )}
       </button>
     </div>
   );
@@ -263,29 +319,66 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
         );
 
         case 8: // Topics of Interest (Categories)
+        const allCategories = Array.from(new Set([
+          ...Object.keys(INITIAL_FOCUS_CATEGORIES),
+          ...(formData.focusCategories || [])
+        ]));
+
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
               <BookOpen className="text-sweden-blue" /> What do you need to sort out?
             </h2>
-             <p className="text-gray-500 text-sm">Select the categories you want to focus on. Uncheck if you have already completed it or aren't interested.</p>
-            <div className="grid grid-cols-1 gap-3">
-              {Object.keys(INITIAL_FOCUS_CATEGORIES).map(category => {
+             <p className="text-gray-500 text-sm">Select the categories you want to focus on or add your own.</p>
+            
+            <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
+              {allCategories.map(category => {
                  const isChecked = formData.focusCategories?.includes(category);
+                 const isCustom = !INITIAL_FOCUS_CATEGORIES[category];
                  return (
                   <button
                     key={category}
                     onClick={() => toggleArrayItem('focusCategories', category)}
-                    className={`p-4 rounded-xl text-left font-medium border-2 transition flex items-center gap-3 ${isChecked ? 'bg-sweden-sky border-sweden-blue text-sweden-blue' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`p-4 rounded-xl text-left font-medium border-2 transition flex items-center justify-between group ${isChecked ? 'bg-sweden-sky border-sweden-blue text-sweden-blue' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
                   >
-                     <div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${isChecked ? 'bg-sweden-blue border-sweden-blue' : 'bg-white border-gray-300'}`}>
-                        {isChecked && <Check size={16} className="text-white" />}
+                     <div className="flex items-center gap-3">
+                         <div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${isChecked ? 'bg-sweden-blue border-sweden-blue' : 'bg-white border-gray-300'}`}>
+                            {isChecked && <Check size={16} className="text-white" />}
+                         </div>
+                        <span>{category}</span>
                      </div>
-                    <span>{category}</span>
+                     {isCustom && (
+                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Custom</span>
+                     )}
                   </button>
                 );
               })}
             </div>
+
+            {/* Custom Category Input */}
+            <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  placeholder="Add custom topic (e.g. Ice Hockey)"
+                  className="flex-1 p-3 border-2 border-gray-200 rounded-xl focus:border-sweden-blue focus:outline-none"
+                  onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addCustomCategory();
+                      }
+                  }}
+                />
+                <button 
+                  onClick={addCustomCategory}
+                  disabled={!customCategory.trim()}
+                  className="bg-sweden-blue text-white p-3 rounded-xl disabled:opacity-50 hover:bg-blue-700 transition"
+                >
+                  <Plus size={24} />
+                </button>
+            </div>
+
             {renderButtons(true, true)}
           </div>
         );

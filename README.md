@@ -1,20 +1,76 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Sweden Companion: Your Student Guide 🇸🇪
 
-# Run and deploy your AI Studio app
+A warm, supportive, and helpful web application designed for international students moving to Sweden. This app acts as a digital guide, helping users navigate the complexities of moving to a new country with features like checklist generation, cultural tips, and an AI-powered assistant.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1bmAlR2GzUTZR6_b40cqylzHi-ic2bWkS
+- **Personalized Onboarding**: Tailors advice based on your origin country, age, and arrival date.
+- **Dynamic Checklists**: Generates "Focus Areas" (e.g., Banking, Migration, Housing) with actionable tasks.
+- **AI Assistant**: A chat interface powered by Google Gemini to answer questions about life in Sweden.
+- **Smart Widgets**:
+  - **Phrase of the Day**: Learn simple Swedish phrases with phonetics.
+  - **Weather Tips**: Get clothing recommendations based on the current season.
+  - **Holiday Tracker**: See upcoming Swedish cultural holidays.
+- **Topic Guides**: Detailed visual guides on specific topics with reliable sources.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: React (with Hooks), TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **AI Integration**: Google Gemini API (`@google/genai`)
+- **Icons**: Lucide React
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Prerequisites
+
+- Node.js installed on your machine.
+- A Google Gemini API Key.
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/sweden-companion.git
+   cd sweden-companion
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**
+   Create a `.env` file in the root directory:
+   ```env
+   API_KEY=your_google_gemini_api_key_here
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push this code to a GitHub repository.
+2. Import the project into Vercel.
+3. Add your `API_KEY` in the Vercel Project Settings > Environment Variables.
+4. Deploy!
+
+### Google Cloud Run
+
+1. Build the container:
+   ```bash
+   gcloud builds submit --tag gcr.io/PROJECT-ID/sweden-companion
+   ```
+2. Deploy the service:
+   ```bash
+   gcloud run deploy sweden-companion --image gcr.io/PROJECT-ID/sweden-companion --platform managed
+   ```
+
+## License
+
+MIT
