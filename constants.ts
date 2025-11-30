@@ -93,5 +93,16 @@ export const DAILY_PHRASES: DailyPhrase[] = [
   { phrase: "Tack", pronunciation: "tack", phonetic: "/tak/", meaning: "Thank you. You will say this a lot!" },
   { phrase: "Ursäkta", pronunciation: "ur-shek-ta", phonetic: "/ˈʉːˌʂɛkːta/", meaning: "Excuse me. Useful when asking for help or bumping into someone." },
   { phrase: "Skål", pronunciation: "skohl", phonetic: "/skoːl/", meaning: "Cheers! Used when toasting with drinks." },
-  { phrase: "Välkommen", pronunciation: "vel-kom-men", phonetic: "/ˈvɛːlˌkɔmːɛn/", meaning: "Welcome." }
+  { phrase: "Välkommen", pronunciation: "vel-kom-men", phonetic: "/ˈvɛːlˌkɔmːɛn/", meaning: "Welcome." },
+  { phrase: "Trevligt att träffas", pronunciation: "trev-ligt at tre-fas", phonetic: "/ˈtreːvˌlɪt at ˈtrɛfːas/", meaning: "Nice to meet you." },
+  { phrase: "Var ligger...", pronunciation: "var lig-ger", phonetic: "/vɑːr ˈlɪɡːɛr/", meaning: "Where is...? (Used for asking directions)" },
+  { phrase: "En kanelbulle, tack", pronunciation: "en ka-nel-bul-le tack", phonetic: "/ɛn kaˈneːlˌbɵlːɛ tak/", meaning: "A cinnamon bun, please." },
+  { phrase: "Jag förstår inte", pronunciation: "yag fur-shtor in-te", phonetic: "/jɑːɡ fœˈʂʈoːr ˈɪnˌtɛ/", meaning: "I don't understand." },
+  { phrase: "Pratar du engelska?", pronunciation: "prah-tar du eng-el-ska", phonetic: "/ˈprɑːˌtar dʉː ˈɛŋːɛlˌska/", meaning: "Do you speak English?" },
+  { phrase: "Vad kostar det?", pronunciation: "vad kos-tar de", phonetic: "/vɑːd ˈkɔsˌtar deː/", meaning: "How much does it cost?" },
+  { phrase: "Tunnelbana", pronunciation: "tun-nel-bah-na", phonetic: "/ˈtɵnːɛlˌbɑːna/", meaning: "Subway or Metro." },
+  { phrase: "Systembolaget", pronunciation: "sis-tem-bo-lah-get", phonetic: "/sʏˈsteːmbʊˌlɑːɡɛt/", meaning: "The government-owned alcohol store." },
+  { phrase: "Svenska kronor", pronunciation: "sven-ska kro-nor", phonetic: "/ˈsvɛnˌska ˈkroːˌnʊr/", meaning: "Swedish crowns (the currency)." },
+  { phrase: "Hur mår du?", pronunciation: "hur mor du", phonetic: "/hʉːr moːr dʉː/", meaning: "How are you?" },
+  { phrase: "Bra, tack", pronunciation: "brah tack", phonetic: "/brɑː tak/", meaning: "Good, thanks." }
 ];

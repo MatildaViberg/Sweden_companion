@@ -1,27 +1,41 @@
-import React, { useMemo } from 'react';
+
+import React, { useMemo, useState } from 'react';
 import { UserProfile, WeatherSeason } from '../types';
 import { DAILY_PHRASES, SWEDISH_HOLIDAYS } from '../constants';
-import { CloudRain, Sun, Snowflake, Wind, Coffee, CalendarHeart } from 'lucide-react';
+import { CloudRain, Sun, Snowflake, Wind, Coffee, CalendarHeart, RefreshCw } from 'lucide-react';
 
 interface WidgetProps {
   userProfile: UserProfile;
 }
 
 export const DailyPhraseWidget: React.FC = () => {
-  // Use current date to deterministically pick a phrase so it stays same for the day
-  const phraseIndex = useMemo(() => {
+  // Initial state based on date, but allow updates
+  const [phraseIndex, setPhraseIndex] = useState(() => {
     const today = new Date().getDate();
     return today % DAILY_PHRASES.length;
-  }, []);
+  });
 
   const phrase = DAILY_PHRASES[phraseIndex];
 
+  const handleNewPhrase = () => {
+    // Generate a random index that is different from the current one
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * DAILY_PHRASES.length);
+    } while (newIndex === phraseIndex && DAILY_PHRASES.length > 1);
+    
+    setPhraseIndex(newIndex);
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-sweden-yellow transition-colors">
-      <div className="flex items-center gap-2 mb-2">
-        <Coffee className="text-sweden-blue dark:text-blue-300" size={20} />
-        <h3 className="font-bold text-gray-700 dark:text-gray-200">Phrase of the Day</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-sweden-yellow transition-colors relative group">
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex items-center gap-2">
+          <Coffee className="text-sweden-blue dark:text-blue-300" size={20} />
+          <h3 className="font-bold text-gray-700 dark:text-gray-200">Phrase of the Day</h3>
+        </div>
       </div>
+      
       <div className="space-y-1">
         <div className="flex items-baseline gap-2 flex-wrap">
             <p className="text-2xl font-bold text-sweden-blue dark:text-blue-300">{phrase.phrase}</p>
@@ -30,6 +44,13 @@ export const DailyPhraseWidget: React.FC = () => {
         <p className="text-sm text-gray-500 dark:text-gray-400 italic">"{phrase.pronunciation}"</p>
         <p className="text-gray-700 dark:text-gray-300 mt-2">{phrase.meaning}</p>
       </div>
+
+      <button 
+        onClick={handleNewPhrase}
+        className="mt-4 w-full py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 text-sm font-bold rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/40 transition flex items-center justify-center gap-2"
+      >
+        <RefreshCw size={14} /> New phrase
+      </button>
     </div>
   );
 };
