@@ -33,9 +33,35 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
     preferredLanguage: 'English'
   });
 
-  const handleNext = () => setStep((prev) => prev + 1);
-  const handleBack = () => setStep((prev) => Math.max(0, prev - 1));
-  const handleSkip = () => setStep((prev) => prev + 1);
+  const handleNext = () => {
+    setStep((prev) => {
+      // If user is already in Sweden (Step 3), skip Arrival Date (Step 4)
+      if (prev === 3 && formData.inSweden) {
+        return 5;
+      }
+      return prev + 1;
+    });
+  };
+
+  const handleBack = () => {
+    setStep((prev) => {
+      // If going back from City (Step 5) and user is in Sweden, skip Arrival Date (Step 4)
+      if (prev === 5 && formData.inSweden) {
+        return 3;
+      }
+      return Math.max(0, prev - 1);
+    });
+  };
+
+  const handleSkip = () => {
+    setStep((prev) => {
+      // Logic to consistent with Next: if marked as in Sweden, skip arrival date
+      if (prev === 3 && formData.inSweden) {
+        return 5;
+      }
+      return prev + 1;
+    });
+  };
   
   const updateField = (field: keyof UserProfile, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

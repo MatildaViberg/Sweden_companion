@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { UserProfile } from '../types';
-import { COUNTRIES, TOPICS_LIST, SWEDISH_CITIES } from '../constants';
-import { Save, ArrowLeft, UserPen, Plus, X, Check } from 'lucide-react';
+import { UserProfile, TaskItem } from '../types';
+import { COUNTRIES, TOPICS_LIST, SWEDISH_CITIES, INITIAL_FOCUS_CATEGORIES } from '../constants';
+import { generateNewTasks } from '../services/geminiService';
+import { Save, ArrowLeft, UserPen, Plus, X, Check, Loader } from 'lucide-react';
 
 interface EditProfileProps {
   initialData: UserProfile;
@@ -13,6 +14,7 @@ interface EditProfileProps {
 const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel }) => {
   const [formData, setFormData] = useState<UserProfile>(initialData);
   const [customCategory, setCustomCategory] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const updateField = (field: keyof UserProfile, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -38,9 +40,77 @@ const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel
     }
   };
 
-  const handleSave = () => {
-    if (formData.username && formData.originCountry) {
+  const handleSave = async () => {
+    if (!formData.username || !formData.originCountry) return;
+
+    setIsSaving(true);
+    
+    try {
+      // 1. Filter out tasks for categories that were unselected/removed
+      const currentCategories = formData.focusCategories || [];
+      let updatedActiveTasks = (formData.activeTasks || []).filter(task => 
+        currentCategories.includes(task.category)
+      );
+
+      // 2. Identify new categories that don't have tasks yet
+      const categoriesNeedingTasks = currentCategories.filter(cat => 
+        !updatedActiveTasks.some(task => task.category === cat)
+      );
+
+      // 3. Generate tasks for new categories
+      const newTasksPromises = categoriesNeedingTasks.map(async (cat) => {
+        // If it's a standard category, use default tasks
+        if (INITIAL_FOCUS_CATEGORIES[cat]) {
+           return INITIAL_FOCUS_CATEGORIES[cat].map(text => ({
+              id: Date.now().toString() + Math.random().toString(),
+              category: cat,
+              text,
+              isCompleted: false
+           }));
+        } 
+        // If it's a custom category, generate with AI
+        else {
+           try {
+             const generatedTexts = await generateNewTasks(cat, [], formData, 3);
+             if (generatedTexts.length === 0) {
+                 return [{
+                    id: Date.now().toString() + Math.random().toString(),
+                    category: cat,
+                    text: `Explore requirements for ${cat}`,
+                    isCompleted: false
+                 }];
+             }
+             return generatedTexts.map(text => ({
+                id: Date.now().toString() + Math.random().toString(),
+                category: cat,
+                text,
+                isCompleted: false
+             }));
+           } catch (e) {
+             console.error(`Failed to generate tasks for ${cat}`, e);
+             return [{
+                id: Date.now().toString() + Math.random().toString(),
+                category: cat,
+                text: `Research ${cat} online`,
+                isCompleted: false
+             }];
+           }
+        }
+      });
+
+      const results = await Promise.all(newTasksPromises);
+      results.forEach(tasks => updatedActiveTasks.push(...tasks));
+
+      // 4. Update profile and save
+      const finalProfile = { ...formData, activeTasks: updatedActiveTasks };
+      onSave(finalProfile);
+
+    } catch (error) {
+      console.error("Error saving profile", error);
+      // Fallback save even if generation fails
       onSave(formData);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -58,7 +128,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel
           <div className="flex items-center gap-4">
              <button 
                 onClick={onCancel}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition text-gray-600 dark:text-gray-300"
+                disabled={isSaving}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition text-gray-600 dark:text-gray-300 disabled:opacity-50"
               >
                 <ArrowLeft size={24} />
              </button>
@@ -69,9 +140,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel
           </div>
           <button 
             onClick={handleSave}
-            className="bg-sweden-blue text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-sm"
+            disabled={isSaving}
+            className="bg-sweden-blue text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <Save size={18} /> Save
+            {isSaving ? (
+              <>
+                <Loader className="animate-spin" size={18} /> Saving...
+              </>
+            ) : (
+              <>
+                <Save size={18} /> Save
+              </>
+            )}
           </button>
         </div>
       </header>
