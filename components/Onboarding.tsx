@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UserProfile, TaskItem } from '../types';
 import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES, SWEDISH_CITIES } from '../constants';
 import { generateNewTasks } from '../services/geminiService';
-import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, MapPin, SkipForward, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, MapPin, SkipForward, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -16,10 +16,15 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
   const [customCategory, setCustomCategory] = useState('');
   
   // Randomly pick 3 usernames on mount
-  const [suggestedNames] = useState(() => {
+  const [suggestedNames, setSuggestedNames] = useState(() => {
     const shuffled = [...EXAMPLE_USERNAMES].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 3);
   });
+
+  const generateNewNames = () => {
+    const shuffled = [...EXAMPLE_USERNAMES].sort(() => 0.5 - Math.random());
+    setSuggestedNames(shuffled.slice(0, 3));
+  };
 
   const [formData, setFormData] = useState<Partial<UserProfile>>(initialData || {
     focusCategories: [], 
@@ -204,7 +209,15 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
               onChange={(e) => updateField('username', e.target.value)}
             />
             <div className="space-y-2">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Or pick one of these:</p>
+              <div className="flex justify-between items-center">
+                 <p className="text-sm text-gray-500 dark:text-gray-400">Or pick one of these:</p>
+                 <button 
+                   onClick={generateNewNames}
+                   className="text-xs text-sweden-blue dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium flex items-center gap-1 transition-colors"
+                 >
+                    <RefreshCw size={12} /> Get more
+                 </button>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {suggestedNames.map(name => (
                   <button 
