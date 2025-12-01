@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UserProfile, TaskItem } from '../types';
 import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES, SWEDISH_CITIES } from '../constants';
 import { generateNewTasks } from '../services/geminiService';
-import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, MapPin, SkipForward } from 'lucide-react';
+import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, MapPin, SkipForward, AlertTriangle } from 'lucide-react';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -454,6 +454,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
                 Step {step} of 9
             </div>
         )}
+
+        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+             <p className="text-[10px] text-gray-400 dark:text-gray-500 flex items-center justify-center gap-1">
+                <AlertTriangle size={10} />
+                Disclaimer: This application is AI-powered and can make mistakes.
+             </p>
+        </div>
       </div>
     </div>
   );

@@ -197,6 +197,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile, onEdit, onTopicClick
 
       </main>
 
+      {/* Disclaimer Footer */}
+      <footer className="max-w-4xl mx-auto p-6 text-center">
+        <p className="text-xs text-gray-400 dark:text-gray-500 flex items-center justify-center gap-2">
+           <AlertTriangle size={14} />
+           Disclaimer: This application is AI-powered and can make mistakes.
+        </p>
+      </footer>
+
       {/* Confirmation Modal */}
       {confirmingTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
