@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { UserProfile } from '../types';
-import { COUNTRIES, TOPICS_LIST } from '../constants';
+import { COUNTRIES, TOPICS_LIST, SWEDISH_CITIES } from '../constants';
 import { Save, ArrowLeft, UserPen, Plus, X, Check } from 'lucide-react';
 
 interface EditProfileProps {
@@ -161,6 +162,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel
             </div>
 
             <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">City in Sweden</label>
+              <select 
+                value={formData.city || ''}
+                onChange={(e) => updateField('city', e.target.value)}
+                className="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-sweden-blue rounded-xl transition outline-none"
+              >
+                <option value="" disabled>Select a city</option>
+                {SWEDISH_CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Arrival Date</label>
               <input 
                 type="date" 
@@ -170,7 +183,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ initialData, onSave, onCancel
               />
             </div>
 
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Duration of Stay</label>
               <select 
                 value={formData.stayDuration}

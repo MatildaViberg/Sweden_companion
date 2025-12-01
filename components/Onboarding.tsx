@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { UserProfile, TaskItem } from '../types';
-import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES } from '../constants';
+import { EXAMPLE_USERNAMES, COUNTRIES, INITIAL_FOCUS_CATEGORIES, SWEDISH_CITIES } from '../constants';
 import { generateNewTasks } from '../services/geminiService';
-import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, X } from 'lucide-react';
+import { ArrowRight, Check, Plane, Calendar, Clock, User, Globe, BookOpen, ChevronLeft, Plus, Loader, MapPin, SkipForward } from 'lucide-react';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -22,7 +22,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
   });
 
   const [formData, setFormData] = useState<Partial<UserProfile>>(initialData || {
-    focusCategories: [], // Changed from topics to focusCategories
+    focusCategories: [], 
     activeTasks: [],
     inSweden: false,
     preferredLanguage: 'English'
@@ -30,6 +30,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => Math.max(0, prev - 1));
+  const handleSkip = () => setStep((prev) => prev + 1);
   
   const updateField = (field: keyof UserProfile, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -57,13 +58,26 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
   };
 
   const finishOnboarding = async () => {
-    if (formData.username && formData.originCountry) {
       setIsFinishing(true);
       
+      // Default fallback if skipped
+      const finalProfile: UserProfile = {
+          username: formData.username || "Friend",
+          originCountry: formData.originCountry || "International",
+          inSweden: formData.inSweden || false,
+          arrivalDate: formData.arrivalDate || new Date().toISOString().split('T')[0],
+          stayDuration: formData.stayDuration || "One year",
+          age: formData.age || 20,
+          city: formData.city,
+          preferredLanguage: formData.preferredLanguage || "English",
+          focusCategories: formData.focusCategories || [],
+          activeTasks: [],
+          isOnboarded: true
+      };
+      
       // Generate initial tasks based on selected categories
-      const selectedCategories = formData.focusCategories || [];
+      const selectedCategories = finalProfile.focusCategories;
       const initialTasks: TaskItem[] = [];
-      const tempProfile = { ...formData } as UserProfile; // Cast for API context
 
       // We map through categories to get their tasks. 
       // If it's a standard category, use constant data.
@@ -79,7 +93,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
          } else {
              // Custom category: Generate with AI
              try {
-                const generatedTexts = await generateNewTasks(cat, [], tempProfile, 3);
+                const generatedTexts = await generateNewTasks(cat, [], finalProfile, 3);
                 if (generatedTexts.length === 0) {
                      return [{
                         id: Date.now().toString() + Math.random().toString(),
@@ -108,39 +122,52 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
 
       const results = await Promise.all(taskPromises);
       results.forEach(tasks => initialTasks.push(...tasks));
+      finalProfile.activeTasks = initialTasks;
 
-      onComplete({
-        ...formData,
-        activeTasks: initialTasks,
-        isOnboarded: true
-      } as UserProfile);
-    }
+      onComplete(finalProfile);
   };
 
   const renderButtons = (isValid: boolean, isLastStep: boolean = false) => (
-    <div className="flex gap-3 mt-6">
-      {step > 0 && (
-        <button 
-          onClick={handleBack}
-          disabled={isFinishing}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
-        >
-          <ChevronLeft size={20} /> Back
-        </button>
-      )}
-      <button 
-        onClick={isLastStep ? finishOnboarding : handleNext}
-        disabled={!isValid || isFinishing}
-        className="flex-[2] bg-sweden-blue disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2"
-      >
-        {isFinishing ? (
-           <>
-             <Loader className="animate-spin" size={20} /> Setting up...
-           </>
-        ) : (
-           isLastStep ? (initialData ? "Save Changes" : "Finish Setup") : "Next"
+    <div className="mt-8 space-y-4">
+      <div className="flex gap-3">
+        {step > 0 && (
+          <button 
+            onClick={handleBack}
+            disabled={isFinishing}
+            className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition"
+          >
+            <ChevronLeft size={20} /> <span className="hidden sm:inline">Back</span>
+          </button>
         )}
-      </button>
+        
+        <button 
+          onClick={isLastStep ? finishOnboarding : handleNext}
+          disabled={(!isValid && !isLastStep && false) || isFinishing} // Allow next even if not valid (handled by Skip logic, but keeping validation for button state style if desired)
+          className={`flex-1 font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 ${
+              isValid 
+              ? 'bg-sweden-blue hover:bg-blue-700 text-white' 
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+          }`}
+          style={{ pointerEvents: isValid ? 'auto' : 'none' }} // Actually disable click if not valid unless skipping
+        >
+          {isFinishing ? (
+             <>
+               <Loader className="animate-spin" size={20} /> Setting up...
+             </>
+          ) : (
+             isLastStep ? (initialData ? "Save Changes" : "Finish Setup") : "Next"
+          )}
+        </button>
+      </div>
+
+      {!isLastStep && (
+         <button
+            onClick={handleSkip}
+            className="w-full text-center py-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm font-medium transition flex items-center justify-center gap-1"
+         >
+            Skip this step <SkipForward size={14} />
+         </button>
+      )}
     </div>
   );
 
@@ -255,7 +282,26 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
           </div>
         );
 
-      case 5: // Stay Duration
+      case 5: // City Selection
+        return (
+          <div className="space-y-6">
+             <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <MapPin className="text-sweden-blue dark:text-blue-400" /> Which city will you live in?
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">I'll show you local weather updates.</p>
+            <select 
+              className="w-full p-4 border-2 border-gray-200 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-xl focus:border-sweden-blue focus:outline-none text-lg bg-white"
+              value={formData.city || ''}
+              onChange={(e) => updateField('city', e.target.value)}
+            >
+              <option value="" disabled>Select a city</option>
+              {SWEDISH_CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+            </select>
+            {renderButtons(!!formData.city)}
+          </div>
+        );
+
+      case 6: // Stay Duration
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -277,7 +323,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
           </div>
         );
 
-        case 6: // Age
+        case 7: // Age
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -294,7 +340,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
           </div>
         );
 
-        case 7: // Language
+        case 8: // Language
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -317,7 +363,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
           </div>
         );
 
-        case 8: // Topics of Interest (Categories)
+        case 9: // Topics of Interest (Categories)
         const allCategories = Array.from(new Set([
           ...Object.keys(INITIAL_FOCUS_CATEGORIES),
           ...(formData.focusCategories || [])
@@ -396,7 +442,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
             <div className="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full mb-8">
               <div 
                 className="bg-sweden-yellow h-2 rounded-full transition-all duration-300" 
-                style={{ width: `${(step / 8) * 100}%` }}
+                style={{ width: `${(step / 9) * 100}%` }}
               ></div>
             </div>
           )}
@@ -405,7 +451,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, initialData }) => {
         
         {step > 0 && (
             <div className="mt-6 text-center text-xs text-gray-400">
-                Step {step} of 8
+                Step {step} of 9
             </div>
         )}
       </div>

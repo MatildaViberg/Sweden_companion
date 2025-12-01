@@ -1,8 +1,8 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { UserProfile, WeatherSeason } from '../types';
-import { DAILY_PHRASES, SWEDISH_HOLIDAYS } from '../constants';
-import { CloudRain, Sun, Snowflake, Wind, Coffee, CalendarHeart, RefreshCw } from 'lucide-react';
+import { DAILY_PHRASES, SWEDISH_HOLIDAYS, SWEDISH_CITIES } from '../constants';
+import { CloudRain, Sun, Snowflake, Wind, Coffee, CalendarHeart, RefreshCw, Thermometer } from 'lucide-react';
 
 interface WidgetProps {
   userProfile: UserProfile;
@@ -56,6 +56,30 @@ export const DailyPhraseWidget: React.FC = () => {
 };
 
 export const WeatherWidget: React.FC<WidgetProps> = ({ userProfile }) => {
+  const [temp, setTemp] = useState<number | null>(null);
+  
+  // Fetch real temperature from Open-Meteo
+  useEffect(() => {
+    const fetchWeather = async () => {
+      if (!userProfile.city) return;
+      
+      const cityData = SWEDISH_CITIES.find(c => c.name === userProfile.city);
+      if (cityData) {
+        try {
+          const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cityData.lat}&longitude=${cityData.lng}&current_weather=true`);
+          const data = await response.json();
+          if (data.current_weather) {
+            setTemp(data.current_weather.temperature);
+          }
+        } catch (e) {
+          console.error("Failed to fetch weather", e);
+        }
+      }
+    };
+    
+    fetchWeather();
+  }, [userProfile.city]);
+
   const weatherInfo = useMemo(() => {
     const month = new Date().getMonth() + 1; // 1-12
     let season: WeatherSeason = WeatherSeason.WINTER;
@@ -81,17 +105,24 @@ export const WeatherWidget: React.FC<WidgetProps> = ({ userProfile }) => {
     }
 
     // Override if not in Sweden
-    const locationText = userProfile.inSweden ? "Current Season" : "Expected in Sweden";
+    const locationText = userProfile.city ? `Weather in ${userProfile.city}` : (userProfile.inSweden ? "Current Season" : "Expected in Sweden");
 
     return { season, icon, clothing, tip, locationText };
-  }, [userProfile.inSweden]);
+  }, [userProfile.inSweden, userProfile.city]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border-l-4 border-sweden-blue transition-colors">
       <div className="flex justify-between items-start mb-2">
         <div>
           <h3 className="font-bold text-gray-700 dark:text-gray-200">{weatherInfo.locationText}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{weatherInfo.season}</p>
+          <div className="flex items-center gap-2 mt-1">
+             {temp !== null && (
+                 <span className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                    {temp}°C
+                 </span>
+             )}
+             <span className="text-sm text-gray-500 dark:text-gray-400">{weatherInfo.season}</span>
+          </div>
         </div>
         {weatherInfo.icon}
       </div>

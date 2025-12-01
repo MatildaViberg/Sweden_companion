@@ -37,37 +37,67 @@ export const COUNTRIES = [
   "Other"
 ];
 
+export const SWEDISH_CITIES = [
+  { name: "Stockholm", lat: 59.3293, lng: 18.0686 },
+  { name: "Gothenburg", lat: 57.7089, lng: 11.9746 },
+  { name: "Malmö", lat: 55.6045, lng: 13.0038 },
+  { name: "Uppsala", lat: 59.8586, lng: 17.6389 },
+  { name: "Lund", lat: 55.7047, lng: 13.1910 },
+  { name: "Linköping", lat: 58.4109, lng: 15.6214 },
+  { name: "Umeå", lat: 63.8258, lng: 20.2630 },
+  { name: "Örebro", lat: 59.2753, lng: 15.2134 },
+  { name: "Västerås", lat: 59.6099, lng: 16.5448 },
+  { name: "Helsingborg", lat: 56.0465, lng: 12.6945 },
+  { name: "Norrköping", lat: 58.5877, lng: 16.1924 },
+  { name: "Jönköping", lat: 57.7826, lng: 14.1618 },
+  { name: "Gävle", lat: 60.6749, lng: 17.1413 },
+  { name: "Borås", lat: 57.7210, lng: 12.9401 },
+  { name: "Eskilstuna", lat: 59.3665, lng: 16.5077 },
+  { name: "Halmstad", lat: 56.6745, lng: 12.8578 },
+  { name: "Växjö", lat: 56.8777, lng: 14.8091 },
+  { name: "Karlstad", lat: 59.4022, lng: 13.5115 },
+  { name: "Sundsvall", lat: 62.3908, lng: 17.3069 },
+  { name: "Luleå", lat: 65.5848, lng: 22.1567 },
+  { name: "Trollhättan", lat: 58.2835, lng: 12.2858 },
+  { name: "Östersund", lat: 63.1792, lng: 14.6357 },
+  { name: "Borlänge", lat: 60.4842, lng: 15.4339 },
+  { name: "Falun", lat: 60.6032, lng: 15.6290 },
+  { name: "Skövde", lat: 58.3898, lng: 13.8461 },
+  { name: "Kiruna", lat: 67.8557, lng: 20.2253 },
+  { name: "Visby", lat: 57.6348, lng: 18.2948 }
+].sort((a, b) => a.name.localeCompare(b.name));
+
 // Key: Category Name, Value: Default 3 tasks
 export const INITIAL_FOCUS_CATEGORIES: Record<string, string[]> = {
   "Legal & Migration": [
-    "Apply for a Residence Permit (Uppehållstillstånd)",
-    "Register with Skatteverket (Personnummer)",
-    "Get a Swedish ID Card (ID-kort)"
+    "Apply for a Residence Permit",
+    "Register with the tax agency",
+    "Get a local ID Card"
   ],
   "Housing & Utilities": [
-    "Sign up for student housing queues (Bostadskö)",
+    "Sign up for student housing queues",
     "Understand your rental contract",
-    "Set up home insurance (Hemförsäkring)"
+    "Set up home insurance"
   ],
   "Banking & Finance": [
-    "Open a Swedish Bank Account",
-    "Get a BankID (Digital ID)",
-    "Understand Swish (Mobile payments)"
+    "Open a local Bank Account",
+    "Set up digital ID (BankID)",
+    "Understand mobile payments (Swish)"
   ],
   "Transport & Travel": [
-    "Get a public transport card (SL/Västtrafik/Skånetrafiken)",
+    "Get a public transport card",
     "Register a bike or learn traffic rules",
     "Download essential travel apps"
   ],
   "Student Life": [
-    "Get a Student Union Card (Mecenat/Studentkortet)",
+    "Get a Student Union Card",
     "Find course literature cheaply",
-    "Understand the Swedish grading system"
+    "Understand the grading system"
   ],
   "Health & Safety": [
-    "Register at a health center (Vårdcentral)",
-    "Find the nearest pharmacy (Apotek)",
-    "Save emergency numbers (112 vs 1177)"
+    "Register at a health center",
+    "Find the nearest pharmacy",
+    "Save emergency numbers"
   ]
 };
 

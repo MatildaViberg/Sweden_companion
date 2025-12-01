@@ -36,6 +36,7 @@ const getUserContextString = (userProfile: UserProfile) => `
     User Context:
     Name: ${userProfile.username}
     Origin: ${userProfile.originCountry}
+    City in Sweden: ${userProfile.city || 'Not specified'}
     Already in Sweden: ${userProfile.inSweden ? 'Yes' : 'No'}
     Arrival Date: ${userProfile.arrivalDate}
     Stay Duration: ${userProfile.stayDuration}
